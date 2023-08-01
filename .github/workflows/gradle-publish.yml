@@ -36,9 +36,35 @@ jobs:
       with:
         arguments: build
 
-    - name: 'Create GitHub Release'
-      uses: softprops/action-gh-release@v1
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.2
       with:
-          files: ./build/libs/*.jar
-          tag_name: v${{ github.run_number }}
-          name: Release V${{ github.run_number }}
+          name: "various-utils.jar"
+          path: "./build/libs/various-utils-1.0.jar"
+
+    - name: Upload a Build Artifact 1
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: "various-utils-sources.jar"
+        path: "./build/libs/various-utils-1.0-sources.jar"
+
+    - name: Upload a Build Artifact 2
+      uses: actions/upload-artifact@v3.1.2
+      with:
+        name: "various-utils-javadoc.jar"
+        path: "./build/libs/various-utils-1.0-javadoc.jar"
+
+  publish:
+    name: "publish-release"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: 'Create GitHub Release'
+        uses: softprops/action-gh-release@v1
+        with:
+            files: ./*.jar
+            tag_name: v${{ github.run_number }}
+            name: Release V${{ github.run_number }}
