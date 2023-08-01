@@ -21,8 +21,7 @@ jobs:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write|read
 
     steps:
     - uses: actions/checkout@v3
@@ -57,20 +56,9 @@ jobs:
         name: "various-utils-javadoc.jar"
         path: "./build/libs/various-utils-1.0-javadoc.jar"
 
-  publish:
-    name: "publish-release"
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: 'Download Presentation Artifacts'
-        uses: actions/download-artifact@v2
-        with:
-          name: "./*.jar"
-      - name: 'Create GitHub Release'
-        uses: softprops/action-gh-release@v1
-        with:
-            files: ./*.jar
-            tag_name: v${{ github.run_number }}
-            name: Release V${{ github.run_number }}
+    - name: 'Create GitHub Release'
+      uses: softprops/action-gh-release@v1
+      with:
+          files: ./*.jar
+          tag_name: v${{ github.run_number }}
+          name: Release V${{ github.run_number }}
