@@ -59,6 +59,6 @@ jobs:
     - name: 'Create GitHub Release'
       uses: softprops/action-gh-release@v1
       with:
-          files: ./*.jar
+          files: ./build/libs/*.jar
           tag_name: v${{ github.run_number }}
           name: Release V${{ github.run_number }}
