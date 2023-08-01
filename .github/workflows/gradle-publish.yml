@@ -61,10 +61,13 @@ jobs:
     name: "publish-release"
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
 
     steps:
+      - name: 'Download Presentation Artifacts'
+        uses: actions/download-artifact@v2
+        with:
+          name: "./*.jar"
       - name: 'Create GitHub Release'
         uses: softprops/action-gh-release@v1
         with:
