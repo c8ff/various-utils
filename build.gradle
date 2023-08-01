@@ -28,6 +28,18 @@ publishing {
     }
 }
 
+jar {
+    archiveBaseName = "${project.name}"
+}
+
+sourceSets {
+    version = null
+}
+
+javadoc {
+    archivesBaseName = "${project.name}"
+}
+
 // https://stackoverflow.com/a/58845574
 java {
     withSourcesJar()

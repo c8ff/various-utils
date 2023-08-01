@@ -38,24 +38,6 @@ jobs:
       with:
         arguments: build
 
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.2
-      with:
-          name: "various-utils.jar"
-          path: "./build/libs/various-utils-1.0.jar"
-
-    - name: Upload a Build Artifact 1
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: "various-utils-sources.jar"
-        path: "./build/libs/various-utils-1.0-sources.jar"
-
-    - name: Upload a Build Artifact 2
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: "various-utils-javadoc.jar"
-        path: "./build/libs/various-utils-1.0-javadoc.jar"
-
     - name: 'Create GitHub Release'
       uses: softprops/action-gh-release@v1
       with:
