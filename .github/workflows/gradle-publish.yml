@@ -36,28 +36,9 @@ jobs:
       with:
         arguments: build
 
-    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
-    # the publishing section of your build.gradle
-    - name: Publish to GitHub Packages
-      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+    - name: 'Create GitHub Release'
+      uses: softprops/action-gh-release@v1
       with:
-        arguments: publish
-      env:
-        GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: "various-utils.jar"
-        path: "./build/libs/various-utils-1.0.jar"
-    - name: Upload a Build Artifact 1
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: "various-utils-sources.jar"
-        path: "./build/libs/various-utils-1.0-sources.jar"
-    - name: Upload a Build Artifact 2
-      uses: actions/upload-artifact@v3.1.2
-      with:
-        name: "various-utils-javadoc.jar"
-        path: "./build/libs/various-utils-1.0-javadoc.jar"
+          files: ./build/libs/*.jar
+          tag_name: v${{ github.run_number }}
+          name: Release V${{ github.run_number }}
