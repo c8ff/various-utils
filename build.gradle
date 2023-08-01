@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'idea'
+    id 'maven-publish'
 }
 
 group = 'dev.seeight'
@@ -12,6 +13,19 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains:annotations:24.0.1"
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/c8ff/various-utils"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
 
 // https://stackoverflow.com/a/58845574
