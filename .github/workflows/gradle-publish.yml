@@ -42,5 +42,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
           files: ./build/libs/*.jar
-          tag_name: v${{ github.run_number }}
-          name: Release V${{ github.run_number }}
+          tag_name: latest
+          name: Latest Automatic Build
+          body: "This is an automated build of the project. Expect bugs or drastic changes."
