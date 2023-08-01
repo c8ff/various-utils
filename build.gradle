@@ -46,6 +46,11 @@ java {
     withJavadocJar()
 }
 
+tasks.register('copyJar', Copy) {
+    from jar, sourcesJar, javadocJar
+    into "${System.getenv("dumb_libraries")}/${project.name}"
+}
+
 idea {
     module {
         downloadJavadoc = true // defaults to false
