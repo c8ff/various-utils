@@ -136,8 +136,15 @@ public class ListUtil {
 	 * Pushes a value to the list from index 0. This method does not change the list size.
 	 */
 	public static <T> void push(List<T> list, T value) {
+		push(list, value, 0);
+	}
+
+	/**
+	 * Pushes a value to the list from the specified index. This method does not change the list size.
+	 */
+	public static <T> void push(List<T> list, T value, int index) {
 		T previous = value;
-		for (int i = 0; i < list.size(); i++) {
+		for (int i = index; i < list.size(); i++) {
 			T temp = previous;
 			previous = list.get(i);
 			list.set(i, temp);
@@ -148,8 +155,15 @@ public class ListUtil {
 	 * Pushes a value to the array from index 0.
 	 */
 	public static <T> void push(T[] array, T value) {
+		push(array, value, 0);
+	}
+
+	/**
+	 * Pushes a value to the array from the specified index.
+	 */
+	public static <T> void push(T[] array, T value, int index) {
 		T previous = value;
-		for (int i = 0; i < array.length; i++) {
+		for (int i = index; i < array.length; i++) {
 			T temp = previous;
 			previous = array[i];
 			array[i] = temp;
@@ -160,8 +174,15 @@ public class ListUtil {
 	 * Pushes a value to the array from index 0.
 	 */
 	public static void push(int[] array, int value) {
+		push(array, value, 0);
+	}
+
+	/**
+	 * Pushes a value to the array from the specified index.
+	 */
+	public static void push(int[] array, int value, int index) {
 		int previous = value;
-		for (int i = 0; i < array.length; i++) {
+		for (int i = index; i < array.length; i++) {
 			int temp = previous;
 			previous = array[i];
 			array[i] = temp;
@@ -172,8 +193,15 @@ public class ListUtil {
 	 * Pushes a value to the array from index 0.
 	 */
 	public static void push(char[] array, char value) {
+		push(array, value, 0);
+	}
+
+	/**
+	 * Pushes a value to the array from the specified index.
+	 */
+	public static void push(char[] array, char value, int index) {
 		char previous = value;
-		for (int i = 0; i < array.length; i++) {
+		for (int i = index; i < array.length; i++) {
 			char temp = previous;
 			previous = array[i];
 			array[i] = temp;
@@ -184,8 +212,15 @@ public class ListUtil {
 	 * Pushes a value to the array from index 0.
 	 */
 	public static void push(long[] array, long value) {
+		push(array, value, 0);
+	}
+
+	/**
+	 * Pushes a value to the array from the specified index.
+	 */
+	public static void push(long[] array, long value, int index) {
 		long previous = value;
-		for (int i = 0; i < array.length; i++) {
+		for (int i = index; i < array.length; i++) {
 			long temp = previous;
 			previous = array[i];
 			array[i] = temp;
