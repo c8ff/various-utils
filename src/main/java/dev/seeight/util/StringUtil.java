@@ -8,6 +8,57 @@ import java.util.ArrayList;
 import java.util.StringJoiner;
 
 public class StringUtil {
+	public static int numberToCharacters(int num, int start, char[] chars) {
+		boolean negative = num < 0;
+
+		int charsLength = MathUtil.digitsOf(num);
+
+		// define '-' at the start of the chars, and invert num if it's negative (if I don't it breaks badly lol)
+		int n;
+		if (negative) {
+			chars[start] = '-';
+			n = -num;
+		} else {
+			n = num;
+		}
+
+		// append digits to the array
+		int i = start + charsLength;
+		while (n > 0) {
+			int r = n % 10;
+			chars[--i] = (char) ('0' + r);
+			n = n / 10;
+		}
+
+		return charsLength;
+	}
+
+	public static char[] numberToCharacters(int num) {
+		boolean negative = num < 0;
+
+		int charsLength = MathUtil.digitsOf(num);
+		char[] c = new char[charsLength];
+
+		// define '-' at the start of the chars, and invert num if it's negative (if I don't it breaks badly lol)
+		int n;
+		if (negative) {
+			c[0] = '-';
+			n = -num;
+		} else {
+			n = num;
+		}
+
+		// append digits to the array
+		int i = c.length;
+		while (n > 0) {
+			int r = n % 10;
+			c[--i] = (char) ('0' + r);
+			n = n / 10;
+		}
+
+		return c;
+	}
+
 	public static @NotNull String exclude(@NotNull String string, char character) {
 		StringBuilder output = new StringBuilder();
 
