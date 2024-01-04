@@ -9,6 +9,11 @@ import java.util.StringJoiner;
 
 public class StringUtil {
 	public static int numberToCharacters(int num, int start, char[] chars) {
+		if (num == 0) {
+			chars[start] = '0';
+			return 1;
+		}
+
 		boolean negative = num < 0;
 
 		int charsLength = MathUtil.digitsOf(num);
@@ -34,6 +39,10 @@ public class StringUtil {
 	}
 
 	public static char[] numberToCharacters(int num) {
+		if (num == 0) {
+			return new char[] { '0' };
+		}
+
 		boolean negative = num < 0;
 
 		int charsLength = MathUtil.digitsOf(num);
