@@ -227,6 +227,44 @@ public class ListUtil {
 		}
 	}
 
+	/**
+	 * Pushes a value to the array from index 0.
+	 */
+	public static void push(float[] array, float value) {
+		push(array, value, 0);
+	}
+
+	/**
+	 * Pushes a value to the array from the specified index.
+	 */
+	public static void push(float[] array, float value, int index) {
+		float previous = value;
+		for (int i = index; i < array.length; i++) {
+			float temp = previous;
+			previous = array[i];
+			array[i] = temp;
+		}
+	}
+
+	/**
+	 * Pushes a value to the array from index 0.
+	 */
+	public static void push(double[] array, double value) {
+		push(array, value, 0);
+	}
+
+	/**
+	 * Pushes a value to the array from the specified index.
+	 */
+	public static void push(double[] array, double value, int index) {
+		double previous = value;
+		for (int i = index; i < array.length; i++) {
+			double temp = previous;
+			previous = array[i];
+			array[i] = temp;
+		}
+	}
+
 	public static <T> int indexOf(List<T> array, T value) {
 		if (value == null || array == null) {
 			return -1;
