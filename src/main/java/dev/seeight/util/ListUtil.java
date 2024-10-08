@@ -1,11 +1,14 @@
 package dev.seeight.util;
 
 import dev.seeight.util.func.BooleanFunction;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @SuppressWarnings("ForLoopReplaceableByForEach")
 public class ListUtil {
@@ -368,5 +371,112 @@ public class ListUtil {
 		}
 
 		return array[index];
+	}
+
+	public static int[] intRange(int start, int end) {
+		if (start > end) {
+			throw new IllegalArgumentException("start cannot be bigger than end.");
+		}
+
+		if (start == end) {
+			return new int[] { start };
+		}
+
+		int[] r = new int[end - start];
+		for (int i = 0, l = start; i < r.length; i++, l++) {
+			r[i] = l;
+		}
+		return r;
+	}
+
+	public static <T> List<T> copyOfFiltered(List<T> original, Predicate<T> predicate) {
+		if (original.isEmpty()) return original;
+
+		var newList = new ArrayList<T>(original.size());
+
+		for (T t : original) {
+			if (predicate.test(t)) {
+				newList.add(t);
+			}
+		}
+
+		return newList;
+	}
+
+	/**
+	 * Converts a list of elements into another type using a transformer.
+	 * @param original The original method
+	 * @param transformer Converts an instance of type {@link A} into an instance of type {@link B}. If this function returns null, the value will be not added.
+	 */
+	public static <A, B> List<B> adapt(List<A> original, Transformer<A, B> transformer) {
+		if (original.isEmpty()) return new ArrayList<>();
+		var newList = new ArrayList<B>(original.size());
+		for (A a : original) {
+			B b = transformer.transform(a);
+			if (b == null) continue;
+			newList.add(b);
+		}
+		return newList;
+	}
+
+	/**
+	 * Converts a list of elements into another array using a transformer.
+	 * @param original The original method
+	 * @param transformer Converts an instance of type {@link A} into an instance of type {@link B}. If this function returns null, the value will be not added.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <A, B> B[] adaptArray(List<A> original, B[] dest, Transformer<A, B> transformer) {
+		if (original.isEmpty()) return dest;
+		if (dest.length < original.size()) {
+			dest = (B[]) Arrays.copyOf(dest, original.size(), dest.getClass());
+		}
+
+		int i = 0;
+		for (A t : original) {
+			B b = transformer.transform(t);
+			if (b == null) continue;
+			dest[i++] = b;
+		}
+
+		if (i >= original.size()) return dest;
+		return (B[]) Arrays.copyOf(dest, i, dest.getClass());
+	}
+
+	public interface Transformer<A, B> {
+		@Nullable B transform(A a);
+	}
+
+	public static <T> T findFirst(T[] arr, @NotNull Predicate<T> predicate, @Nullable T defaultValue) {
+		for (T t : arr)
+			if (predicate.test(t)) return t;
+
+		return defaultValue;
+	}
+
+	public static <T> T findFirst(List<T> arr, @NotNull Predicate<T> predicate, @Nullable T defaultValue) {
+		for (T t : arr)
+			if (predicate.test(t)) return t;
+
+		return defaultValue;
+	}
+
+	public static <A, B> @Nullable B findFirstTransformed(A[] arr, @NotNull Function<A, B> predicate) {
+		for (A a : arr) {
+			B b = predicate.apply(a);
+			if (b != null) {
+				return b;
+			}
+		}
+		return null;
+	}
+
+	public static <A, B> @Nullable B findFirstTransformed(List<A> arr, @NotNull Function<A, B> predicate) {
+		for (A a : arr) {
+			B b = predicate.apply(a);
+			if (b != null) {
+				return b;
+			}
+		}
+		return null;
 	}
 }
