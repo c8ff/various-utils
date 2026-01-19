@@ -22,17 +22,48 @@ import dev.seeight.util.func.BooleanFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings("ForLoopReplaceableByForEach")
 public class ListUtil {
-	public static <A, B> boolean contains(ArrayList<A> list, Function<A, B> type, B value) {
+	@SafeVarargs
+	public static <A> boolean passes(Iterable<A> iterable, @NotNull Predicate<A>... predicates) {
+		boolean[] s = new boolean[predicates.length];
+		for (A a : iterable) {
+			boolean passes = true;
+
+			for (int i = 0; i < predicates.length; i++) {
+				// Already parsed condition
+				if (s[i]) continue;
+
+				// Check condition
+				s[i] = predicates[i].test(a);
+				passes = passes && s[i];
+			}
+
+			if (passes) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static <A, B> boolean contains(List<A> list, Function<A, B> type, B value) {
 		for (A a : list) {
 			if (value.equals(type.apply(a))) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static <A> boolean contains(Iterable<A> list, Predicate<A> predicate) {
+		for (A a : list) {
+			if (predicate.test(a)) {
 				return true;
 			}
 		}
@@ -316,6 +347,15 @@ public class ListUtil {
 		return -1;
 	}
 
+	public static <A, B> int indexOf(List<A> list, B value, Function<A, B> func) {
+		int i = 0;
+		for (A a : list) {
+			if (func.apply(a).equals(value)) return i;
+			i++;
+		}
+		return -1;
+	}
+
 	public static int indexOf(int[] array, int value) {
 		if (array == null) {
 			return -1;
@@ -422,14 +462,12 @@ public class ListUtil {
 	}
 
 	/**
-	 * Converts a list of elements into another type using a transformer.
-	 * @param original The original method
+	 * Maps a list of elements into another list using a transformer.
 	 * @param transformer Converts an instance of type {@link A} into an instance of type {@link B}. If this function returns null, the value will be not added.
 	 */
-	public static <A, B> List<B> adapt(List<A> original, Transformer<A, B> transformer) {
-		if (original.isEmpty()) return new ArrayList<>();
-		var newList = new ArrayList<B>(original.size());
-		for (A a : original) {
+	public static <A, B> List<B> map(Iterable<A> it, Transformer<A, B> transformer) {
+		var newList = new ArrayList<B>();
+		for (A a : it) {
 			B b = transformer.transform(a);
 			if (b == null) continue;
 			newList.add(b);
@@ -438,25 +476,98 @@ public class ListUtil {
 	}
 
 	/**
+	 * Maps a list of elements into another list using a transformer.
+	 * @param transformer Converts an instance of type {@link A} into an instance of type {@link B}. If this function returns null, the value will be not added.
+	 */
+	public static <A, B> List<B> map(List<A> list, Transformer<A, B> transformer) {
+		if (list.isEmpty()) return new ArrayList<>();
+		var newList = new ArrayList<B>(list.size());
+		for (A a : list) {
+			B b = transformer.transform(a);
+			if (b == null) continue;
+			newList.add(b);
+		}
+		return newList;
+	}
+
+	/**
+	 * Maps an array of elements into another list using a transformer.
+	 * @param transformer Converts an instance of type {@link A} into an instance of type {@link B}. If this function returns null, the value will be not added.
+	 */
+	public static <A, B> List<B> mapArray(A[] arr, Transformer<A, B> transformer) {
+		if (arr.length == 0) return Collections.emptyList();
+		ArrayList<B> d = new ArrayList<>();
+
+		for (A t : arr) {
+			B b = transformer.transform(t);
+			if (b == null) continue;
+			d.add(b);
+		}
+
+		return d;
+	}
+
+	/**
 	 * Converts a list of elements into another array using a transformer.
-	 * @param original The original method
+	 * @param dest The destination array. If this array is empty, or it's less than the original array, it will return a new array.
 	 * @param transformer Converts an instance of type {@link A} into an instance of type {@link B}. If this function returns null, the value will be not added.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <A, B> B[] adaptArray(List<A> original, B[] dest, Transformer<A, B> transformer) {
-		if (original.isEmpty()) return dest;
-		if (dest.length < original.size()) {
-			dest = (B[]) Arrays.copyOf(dest, original.size(), dest.getClass());
+	public static <A, B> B[] mapArray(List<A> list, B[] dest, Transformer<A, B> transformer) {
+		if (list.isEmpty()) return dest;
+		if (dest.length < list.size()) {
+			dest = (B[]) Arrays.copyOf(dest, list.size(), dest.getClass());
 		}
 
 		int i = 0;
-		for (A t : original) {
+		for (A t : list) {
 			B b = transformer.transform(t);
 			if (b == null) continue;
 			dest[i++] = b;
 		}
 
-		if (i >= original.size()) return dest;
+		if (i >= list.size()) return dest;
+		return (B[]) Arrays.copyOf(dest, i, dest.getClass());
+	}
+
+	/**
+	 * Converts an array of elements into the provided array using a transformer.
+	 * @param dest The destination array. If this array is empty, or it's less than the original array, it will return a new array.
+	 * @param transformer Converts an instance of type {@link A} into an instance of type {@link B}. If this function returns null, the value will be not added.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <A, B> B[] mapArray(A[] arr, B[] dest, Transformer<A, B> transformer) {
+		if (arr.length == 0) return dest;
+		if (dest.length < arr.length) {
+			dest = (B[]) Arrays.copyOf(dest, arr.length, dest.getClass());
+		}
+
+		int i = 0;
+		for (A t : arr) {
+			B b = transformer.transform(t);
+			if (b == null) continue;
+			dest[i++] = b;
+		}
+
+		if (i >= arr.length) return dest;
+		return (B[]) Arrays.copyOf(dest, i, dest.getClass());
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <B> B[] mapArray(int[] arr, B[] dest, IntTransformer<B> transformer) {
+		if (arr.length == 0) return dest;
+		if (dest.length < arr.length) {
+			dest = (B[]) Arrays.copyOf(dest, arr.length, dest.getClass());
+		}
+
+		int i = 0;
+		for (int t : arr) {
+			B b = transformer.transform(t);
+			if (b == null) continue;
+			dest[i++] = b;
+		}
+
+		if (i >= arr.length) return dest;
 		return (B[]) Arrays.copyOf(dest, i, dest.getClass());
 	}
 
@@ -464,7 +575,18 @@ public class ListUtil {
 		@Nullable B transform(A a);
 	}
 
+	public interface IntTransformer<B> {
+		@Nullable B transform(int num);
+	}
+
 	public static <T> T findFirst(T[] arr, @NotNull Predicate<T> predicate, @Nullable T defaultValue) {
+		for (T t : arr)
+			if (predicate.test(t)) return t;
+
+		return defaultValue;
+	}
+
+	public static <T> T findFirst(Iterable<T> arr, @NotNull Predicate<T> predicate, @Nullable T defaultValue) {
 		for (T t : arr)
 			if (predicate.test(t)) return t;
 
@@ -496,5 +618,36 @@ public class ListUtil {
 			}
 		}
 		return null;
+	}
+
+	public static <A> int indexOf(A[] array, Predicate<A> predicate) {
+		for (int i = 0; i < array.length; i++) {
+			if (predicate.test(array[i])) return i;
+		}
+		return -1;
+	}
+
+	public static <T> List<T> asList(Collection<T> collection) {
+		if (collection instanceof List<T>) {
+			return (List<T>) collection;
+		}
+
+		return new ArrayList<>(collection);
+	}
+
+	public static Integer[] toObjectIntArray(int[] arr) {
+		Integer[] dst = new Integer[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			dst[i] = arr[i];
+		}
+		return dst;
+	}
+
+	public static int[] toNativeIntArray(Integer[] arr) {
+		int[] dst = new int[arr.length];
+		for (int i = 0; i < arr.length; i++) {
+			dst[i] = arr[i];
+		}
+		return dst;
 	}
 }
