@@ -11,6 +11,10 @@ repositories {
     mavenCentral()
 }
 
+java {
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 dependencies {
     implementation "org.jetbrains:annotations:24.0.1"
 }
